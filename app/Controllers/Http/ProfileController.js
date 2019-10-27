@@ -1,6 +1,6 @@
-'use strict'
+"use strict";
 
-const Profile = use('App/Models/Profile')
+const Profile = use("App/Models/Profile");
 
 /** @typedef {import('@adonisjs/framework/src/Request')} Request */
 /** @typedef {import('@adonisjs/framework/src/Response')} Response */
@@ -19,9 +19,11 @@ class ProfileController {
    * @param {Response} ctx.response
    * @param {View} ctx.view
    */
-  async index () {
-    const profiles = await Profile.all()
-    return profiles
+  async index() {
+    const profiles = await Profile.query()
+      .with("user")
+      .fetch();
+    return profiles;
   }
 
   /**
@@ -42,10 +44,10 @@ class ProfileController {
    * @param {Request} ctx.request
    * @param {Response} ctx.response
    */
-  async store ({ request, auth }) {
-    const data = request.only(["title", "image"])
-    const profile = await Profile.create({ user_id: auth.user.id, ...data })
-    return profile
+  async store({ request, auth }) {
+    const data = request.only(["title", "image"]);
+    const profile = await Profile.create({ user_id: auth.user.id, ...data });
+    return profile;
   }
 
   /**
@@ -57,9 +59,9 @@ class ProfileController {
    * @param {Response} ctx.response
    * @param {View} ctx.view
    */
-  async show ({ params }) {
-    const profile = await Profile.findOrFail(params.id)
-    return profile
+  async show({ params }) {
+    const profile = await Profile.findOrFail(params.id);
+    return profile;
   }
 
   /**
@@ -80,8 +82,7 @@ class ProfileController {
    * @param {Request} ctx.request
    * @param {Response} ctx.response
    */
-  async update ({ params, request, response }) {
-  }
+  async update({ params, request, response }) {}
 
   /**
    * Delete a profile with id.
@@ -91,15 +92,15 @@ class ProfileController {
    * @param {Request} ctx.request
    * @param {Response} ctx.response
    */
-  async destroy ({ params, auth, response }) {
-    const profile = await Profile.findOrFail(params.id)
+  async destroy({ params, auth, response }) {
+    const profile = await Profile.findOrFail(params.id);
 
-    if (profile.user_id != auth.user.id){
-      return response.status(401)
+    if (profile.user_id != auth.user.id) {
+      return response.status(401);
     }
 
-    await profile.delete()
+    await profile.delete();
   }
 }
 
-module.exports = ProfileController
+module.exports = ProfileController;
