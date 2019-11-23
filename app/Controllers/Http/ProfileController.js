@@ -22,6 +22,7 @@ class ProfileController {
   async index() {
     const profiles = await Profile.query()
       .with("user")
+      .with("images")
       .fetch();
     return profiles;
   }
@@ -61,6 +62,7 @@ class ProfileController {
    */
   async show({ params }) {
     const profile = await Profile.findOrFail(params.id);
+    await profile.load("images");
     return profile;
   }
 
